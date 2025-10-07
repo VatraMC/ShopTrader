@@ -1,0 +1,16 @@
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/quests/QuestDef.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/sell/SellRotationManager.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/gui/TraderGUI.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/quests/QuestListener.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/quests/QuestManager.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/TraderManager.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/shop/Catalog.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/shop/DropManager.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/listeners/TraderListener.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/model/ShopItem.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/ShopTraderPlugin.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/commands/TraderCommand.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/ai/CerebrasClient.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/model/Category.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/economy/EconomyService.java
+/home/bodia/ShopPluginV2/src/main/java/com/bodia/shoptrader/model/Tier.java

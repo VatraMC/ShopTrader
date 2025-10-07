@@ -1,0 +1,20 @@
+name: ShopTrader
+main: com.bodia.shoptrader.ShopTraderPlugin
+version: 1.0.0
+api-version: '1.20'
+authors: [ "bodia" ]
+description: "Магазин Мандрівного Торговця з вкладками Магазин, Квести та Продаж. Команди для створення, повороту, видалення, перезавантаження та керування квестами і продажем."
+softdepend: [ Vault ]
+commands:
+  trader:
+    aliases: [ wt ]
+    description: Керування та відкриття магазину Мандрівного Торговця.
+    usage: "/trader <open|spawn|rotate|remove|reload|quests|deliver|claim|claimall|qregen|sellregen> [аргументи]"
+    permission: shoptrader.use
+permissions:
+  shoptrader.use:
+    description: Дозволяє використовувати команду /trader для відкриття магазину.
+    default: true
+  shoptrader.admin:
+    description: Дозволяє створювати, повертати, видаляти торговця та перезавантажувати конфігурацію.
+    default: op
