@@ -126,7 +126,7 @@ public class Catalog {
         if (m == Material.NETHERITE_BLOCK || m == Material.BEACON || m == Material.ENCHANTING_TABLE || m == Material.BEDROCK || m == Material.BEACON || m ==  Material.ANCIENT_DEBRIS) return Tier.LEGENDARY;
         if (m == Material.DIAMOND_BLOCK ) return Tier.EPIC;
         if (m == Material.IRON_BLOCK || m == Material.ANVIL) return Tier.UNCOMMON;
-        return Tier.COMMON;
+        return Tier.GARBAGE;
     }
 
     public double priceFor(Tier tier) {
@@ -181,7 +181,7 @@ public class Catalog {
             return new ShopItem(m, Tier.EPIC, cat, price);
         }
         if (cat == Category.GARBAGE) {
-            return new ShopItem(m, Tier.COMMON, cat, garbagePrice);
+            return new ShopItem(m, Tier.GARBAGE, cat, garbagePrice);
         }
         Tier t = tierFor(m);
         double price = unitShopPrice(m);

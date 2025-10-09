@@ -6,7 +6,8 @@ public enum Tier {
     COMMON(ChatColor.WHITE, "Common"),
     UNCOMMON(ChatColor.GREEN, "Uncommon"),
     EPIC(ChatColor.DARK_PURPLE, "Epic"),
-    LEGENDARY(ChatColor.GOLD, "Legendary");
+    LEGENDARY(ChatColor.GOLD, "Legendary"),
+    GARBAGE(ChatColor.GRAY, "Garbage");
 
     private final ChatColor color;
     private final String display;

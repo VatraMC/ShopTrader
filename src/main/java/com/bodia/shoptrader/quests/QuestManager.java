@@ -234,7 +234,7 @@ public class QuestManager {
         if (!isCompleted(u, questId) && next >= def.getRequired()) {
             setCompleted(u, questId, true);
             saveData();
-            p.sendMessage(ChatColor.GREEN + "Квест готовий до отримання: " + ChatColor.YELLOW + def.getName() + ChatColor.GREEN + ". Використайте " + ChatColor.AQUA + "/trader claim " + questId + ChatColor.GREEN + ", щоб отримати нагороду.");
+            p.sendMessage(ChatColor.GREEN + "Квест готовий до отримання: " + ChatColor.YELLOW + def.getName() + ChatColor.GREEN + ". Зайдіть до трейдера щоб забрати нагороду.");
             p.playSound(p.getLocation(), org.bukkit.Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f);
         }
     }

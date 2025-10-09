@@ -1,8 +1,11 @@
 package com.bodia.shoptrader.sell;
 
 import com.bodia.shoptrader.shop.Catalog;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -158,51 +161,47 @@ public class SellRotationManager {
         offers.clear();
         Set<Material> picked = new HashSet<>();
 
-        // Build pools from all materials to have full control over categories
-        List<Material> weapons = new ArrayList<>();
-        List<Material> tools = new ArrayList<>();
-        List<Material> blocks = new ArrayList<>();
-        List<Material> materials = new ArrayList<>();
-        List<Material> miscellany = new ArrayList<>();
+        // Build pools from all materials: only allow general crafting materials and farmables
+        List<Material> materials = new ArrayList<>(); // ingots, gems, dusts, shards, etc.
+        List<Material> farmables = new ArrayList<>(); // crops and other farm-produced items
 
         for (Material m : Material.values()) {
             if (!m.isItem()) continue;
             if (disallowedHard(m)) continue;
             String n = m.name();
-            boolean isBlock = m.isBlock();
             boolean isWeapon = n.endsWith("_SWORD") || n.equals("BOW") || n.equals("CROSSBOW") || n.equals("TRIDENT");
             boolean isTool = n.endsWith("_PICKAXE") || n.endsWith("_AXE") || n.endsWith("_SHOVEL") || n.endsWith("_HOE") || n.equals("SHEARS") || n.equals("FISHING_ROD");
             boolean isArmor = n.endsWith("_HELMET") || n.endsWith("_CHESTPLATE") || n.endsWith("_LEGGINGS") || n.endsWith("_BOOTS") || n.equals("ELYTRA") || n.startsWith("CHAINMAIL");
             boolean stackable = m.getMaxStackSize() > 1;
 
-            if (isWeapon) {
-                weapons.add(m);
-            } else if (isTool) {
-                tools.add(m);
-            } else if (isBlock) {
-                blocks.add(m);
-            } else if (stackable && isMaterialItem(n)) {
+            // Exclude armors, weapons, and tools from selling entirely
+            if (isWeapon || isTool || isArmor) continue;
+
+            // Only allow items that are NOT produced by any recipe, EXCEPT allow all *_INGOT items explicitly
+            if (!isNonCraftable(m) && !isIngot(m)) continue;
+
+            // Whitelist explicit farmables (even if they are also blocks)
+            if (isFarmableMaterial(m)) {
+                farmables.add(m);
+                continue;
+            }
+
+            // General crafting materials (ingots, gems, dusts, etc.)
+            if (stackable && isMaterialItem(n)) {
                 materials.add(m);
-            } else if (stackable && !isArmor) {
-                miscellany.add(m);
             }
         }
 
-        Collections.shuffle(weapons, rng);
-        Collections.shuffle(tools, rng);
-        Collections.shuffle(blocks, rng);
         Collections.shuffle(materials, rng);
-        Collections.shuffle(miscellany, rng);
+        Collections.shuffle(farmables, rng);
 
-        pickMany(picked, weapons, 2);
-        pickMany(picked, tools, 3);
-        pickMany(picked, blocks, 5);
-        pickMany(picked, materials, 5);
-        pickMany(picked, miscellany, 5);
+        // Ensure at least 2 farmable items are included
+        pickMany(picked, farmables, 2);
 
-        // Fallback: if any category lacked items, fill to 20 from blocks/materials/misc pools
+        // Fill remaining slots strictly from allowed pools (materials + farmables)
         List<Material> filler = new ArrayList<>();
-        filler.addAll(blocks); filler.addAll(materials); filler.addAll(miscellany);
+        filler.addAll(materials);
+        filler.addAll(farmables);
         Collections.shuffle(filler, rng);
         for (Material m : filler) {
             if (picked.size() >= OFFER_COUNT) break;
@@ -254,6 +253,50 @@ public class SellRotationManager {
         return n.equals("REDSTONE") || n.equals("LAPIS_LAZULI") || n.equals("QUARTZ") || n.equals("PRISMARINE_SHARD") || n.equals("PRISMARINE_CRYSTALS") || n.equals("DIAMOND") || n.equals("EMERALD") || n.equals("COAL") || n.equals("CHARCOAL") || n.equals("AMETHYST_SHARD") || n.equals("GLOWSTONE_DUST");
     }
 
+    private boolean isIngot(Material m) {
+        return m.name().endsWith("_INGOT");
+    }
+
+    // True if there is no recipe that produces this material as an output
+    private boolean isNonCraftable(Material m) {
+        try {
+            ItemStack out = new ItemStack(m);
+            List<Recipe> recipes = Bukkit.getRecipesFor(out);
+            return recipes == null || recipes.isEmpty();
+        } catch (Throwable t) {
+            // If anything goes wrong (e.g., during early server init), default to non-craftable to be safe
+            return true;
+        }
+    }
+
+    // Items that come from farming or renewable crops that should be allowed and prioritized in sell rotation
+    private boolean isFarmableMaterial(Material m) {
+        return switch (m) {
+            case WHEAT,
+                 WHEAT_SEEDS,
+                 CARROT,
+                 POTATO,
+                 BEETROOT,
+                 BEETROOT_SEEDS,
+                 SUGAR_CANE,
+                 CACTUS,
+                 BAMBOO,
+                 NETHER_WART,
+                 PUMPKIN,
+                 MELON_SLICE,
+                 MELON_SEEDS,
+                 PUMPKIN_SEEDS,
+                 COCOA_BEANS,
+                 KELP,
+                 SWEET_BERRIES,
+                 GLOW_BERRIES,
+                 CHORUS_FRUIT,
+                 RED_MUSHROOM,
+                 BROWN_MUSHROOM -> true;
+            default -> false;
+        };
+    }
+
     private void pickMany(Set<Material> out, List<Material> pool, int count) {
         for (Material m : pool) {
             if (out.size() >= OFFER_COUNT) break;
@@ -270,6 +313,7 @@ public class SellRotationManager {
             case UNCOMMON -> 1.15;
             case EPIC -> 1.5;
             case LEGENDARY -> 2.0;
+            case GARBAGE -> 0.5;
         };
     }
 
@@ -281,6 +325,7 @@ public class SellRotationManager {
             case UNCOMMON -> 12;
             case EPIC -> 8;
             case LEGENDARY -> 4;
+            case GARBAGE -> 32;
         };
     }
 
